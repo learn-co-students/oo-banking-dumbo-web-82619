@@ -6,6 +6,7 @@ describe 'Transfer' do
   let(:terrance) { BankAccount.new("Terrance") }
   let(:transfer) { Transfer.new(amanda, avi, 50) }
   let(:bad_transfer) { Transfer.new(amanda, avi, 4000) }
+  let(:closed_account_transfer) { Transfer.new(amanda, terrance, 50) }
 
   describe 'initialize' do
     it "can initialize a Transfer" do
@@ -49,8 +50,10 @@ describe 'Transfer' do
   describe '#execute_transaction' do
     let(:avi) { BankAccount.new("Avi") }
     let(:amanda) { BankAccount.new("Amanda") }
+    let(:terrance) { BankAccount.new("Terrance") }
     let(:transfer) { Transfer.new(amanda, avi, 50) }
     let(:bad_transfer) { Transfer.new(amanda, avi, 4000) }
+    let(:closed_account_transfer) { Transfer.new(amanda, terrance, 50) }
 
     it "can execute a successful transaction between two accounts" do
       transfer.execute_transaction
@@ -71,10 +74,9 @@ describe 'Transfer' do
 
     it "rejects a transfer if the sender does not have enough funds (does not have a valid account)" do
       terrance.close_account
-      closed_account_transfer = Transfer.new(amanda, terrance, 50)
+      closed_account_transfer.execute_transaction
       expect(closed_account_transfer.execute_transaction).to eq("Transaction rejected. Please check your account balance.")
       expect(closed_account_transfer.status).to eq("rejected")
-
       expect(bad_transfer.execute_transaction).to eq("Transaction rejected. Please check your account balance.")
       expect(bad_transfer.status).to eq("rejected")
     end
